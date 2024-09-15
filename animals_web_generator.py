@@ -38,6 +38,7 @@ def creating_string(animals_data):
     output = ''  # define an empty string
     output = '<ul class="cards">\n'
     for animal_data in animals_data:
+        output += '<li class="cards__item">'
         output += '    <li>\n'  # List item start
         output += f"        <strong>Name:</strong> {animal_data.get('name', 'Unknown')}<br>\n"
         characteristics = animal_data.get('characteristics', {})
@@ -45,6 +46,7 @@ def creating_string(animals_data):
         output += f"        <strong>Location:</strong> {animal_data['locations'][0] if animal_data.get('locations') else 'N/A'}<br>\n"
         output += f"        <strong>Type:</strong> {characteristics.get('type', 'N/A')}<br>\n"
         output += '    </li>\n'
+        output += '</li>'
     output += '</ul>\n'
 
     return output
