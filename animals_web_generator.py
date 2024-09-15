@@ -38,16 +38,19 @@ def creating_string(animals_data):
     output = ''  # define an empty string
     output = '<ul class="cards">\n'
     for animal_data in animals_data:
-        output += '<li class="cards__item">'
-        output += '    <li>\n'  # List item start
-        output += f"        <strong>Name:</strong> {animal_data.get('name', 'Unknown')}<br>\n"
+        output += '<li class="cards__item">\n'
+        output += f'  <div class="card__title">{animal_data.get("name", "Unknown")}</div>\n'
+        output += '  <p class="card__text">\n'
+
         characteristics = animal_data.get('characteristics', {})
-        output += f"        <strong>Diet:</strong> {characteristics.get('diet', 'N/A')}<br>\n"
-        output += f"        <strong>Location:</strong> {animal_data['locations'][0] if animal_data.get('locations') else 'N/A'}<br>\n"
-        output += f"        <strong>Type:</strong> {characteristics.get('type', 'N/A')}<br>\n"
-        output += '    </li>\n'
-        output += '</li>'
-    output += '</ul>\n'
+        locations = animal_data.get('locations', [])
+
+        output += f'      <strong>Location:</strong> {", ".join(locations) if locations else "N/A"}<br/>\n'
+        output += f'      <strong>Type:</strong> {characteristics.get("type", "N/A")}<br/>\n'
+        output += f'      <strong>Diet:</strong> {characteristics.get("diet", "N/A")}<br/>\n'
+
+        output += '  </p>\n'
+        output += '</li>\n'
 
     return output
 
