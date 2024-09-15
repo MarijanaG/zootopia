@@ -34,23 +34,37 @@ def load_template():
     return html_content
 
 
-def creating_string(html_content):
+def creating_string(animals_data):
     output = ''  # define an empty string
-    for animal_data in html_content:
-    # append information to each string
-        output += f"Name: {animal_data['name']}\n"
-        output += f"Diet: {animal_data['characteristics']['diet']}\n"
-        output += f"First Location {animal_data['locations'][0]}\n"
-        output += f"Type {animal_data['characteristics'].get('type', 'N/A')}\n\n"
+    output = '<ul class="cards">\n'
+    for animal_data in animals_data:
+        output += '    <li>\n'  # List item start
+        output += f"        <strong>Name:</strong> {animal_data.get('name', 'Unknown')}<br>\n"
+        characteristics = animal_data.get('characteristics', {})
+        output += f"        <strong>Diet:</strong> {characteristics.get('diet', 'N/A')}<br>\n"
+        output += f"        <strong>Location:</strong> {animal_data['locations'][0] if animal_data.get('locations') else 'N/A'}<br>\n"
+        output += f"        <strong>Type:</strong> {characteristics.get('type', 'N/A')}<br>\n"
+        output += '    </li>\n'
+    output += '</ul>\n'
 
-    print(output)
+    return output
+
+
+def replace_placeholder(html_content, placeholder, replacement):
+    """ Replace a placeholder with the given replacement """
+    return html_content.replace(placeholder, replacement)
+
 
 
 def main():
     animals = load_data('animals_data.json')
     creating_data(animals)
     html_template = load_template()
-    creating_string(animals)
+    animals_info = creating_string(animals)
+    updated_html = replace_placeholder(html_template, '__REPLACE_ANIMALS_INFO__', animals_info)
+    with open('animals.html', 'w') as file:
+        file.write(updated_html)
+    print("HTML file 'animals.html' has been created successfully.")
 
 
 if __name__=="__main__":
