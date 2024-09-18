@@ -1,4 +1,73 @@
 import json
+import requests
+from data_fetcher import fetch_animal_data, generate_html
+
+
+def fetch_animal_data_and_generate_html(api_key, animal_name):
+# API URL
+    url = "https://api.api-ninjas.com/v1/animals"
+
+# Your API key
+    api_key = "uLnOf5PL3S9PZlsu36+n7Q==6iL55zWMjQ7qHpPH"
+
+# Ask the user for an animal name
+    animal_name = input("Enter a name of an animal: ")
+
+# Parameters for the API
+    params = {'name': animal_name}
+
+# Headers with the API key
+    headers = {
+        'X-Api-Key': api_key
+    }
+
+# Send the GET request
+    response = requests.get(url, headers=headers, params=params)
+
+# Check the request
+    if response.status_code == 200:
+    # Fetch the results
+        animals = response.json()
+
+        if animals:  # Check if there are any results in the response
+        # Start the HTML content
+            html_content = """
+            <html>
+            <head>
+                <title>Animal Information</title>
+            </head>
+            <body>
+                <h1>Animals related to '{}'</h1>
+                <ul>
+            """.format(animal_name.capitalize())
+
+        # Add each animal's details to the HTML content
+            for animal in animals:
+                html_content += "<li><h2>{}</h2>".format(animal.get('name', 'Unknown Animal'))
+                html_content += "<p><strong>Kingdom:</strong> {}</p>".format(animal['taxonomy'].get('kingdom', 'N/A'))
+                html_content += "<p><strong>Phylum:</strong> {}</p>".format(animal['taxonomy'].get('phylum', 'N/A'))
+                html_content += "<p><strong>Class:</strong> {}</p>".format(animal['taxonomy'].get('class', 'N/A'))
+                html_content += "<p><strong>Order:</strong> {}</p>".format(animal['taxonomy'].get('order', 'N/A'))
+                html_content += "<p><strong>Family:</strong> {}</p>".format(animal['taxonomy'].get('family', 'N/A'))
+                html_content += "</li>"
+
+        # Close the HTML tags
+            html_content += """
+                </ul>
+            </body>
+            </html>
+            """
+
+        # Write the content to an HTML file
+            with open('animals.html', 'w') as file:
+                file.write(html_content)
+
+            print("Website was successfully generated to the file animals.html.")
+        else:
+        # No animals found, print a message to the user
+            print(f"No animals found for the name '{animal_name}'. Please try again.")
+    else:
+        print(f"Error: Unable to fetch animal data. Status code: {response.status_code}")
 
 
 def load_data(file_path):
