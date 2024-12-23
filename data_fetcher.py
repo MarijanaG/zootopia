@@ -5,33 +5,39 @@ from dotenv import load_dotenv
 # Load from .env file
 load_dotenv()
 
-# Fetch the API key from environment variables
+
+# Fetch the API key from env
 API_KEY = os.getenv("API_KEY")
+API_URL = os.getenv("API_URL", "https://api.api-ninjas.com/v1/animals")
 
 
-def fetch_animal_data(api_key, animal_name):
-    # API URL
-    url = "https://api.api-ninjas.com/v1/animals"
+def fetch_animal_data(animal_name):
+    """
+    Fetches animal data from the API based on the provided animal name.
 
-    # Parameters for the API
+    Args:
+        animal_name (str): The name of the animal to search for.
+
+    Returns:
+        list: A list of dictionaries containing animal data if successful; otherwise, an empty list.
+    """
+    headers = {'X-Api-Key': API_KEY}
     params = {'name': animal_name}
 
-    # Headers with the API key
-    headers = {
-        'X-Api-Key': api_key
-    }
-
-    # Send the GET request
-    response = requests.get(url, headers=headers, params=params)
-
-    # Check the request
-    if response.status_code == 200:
-        # Fetch and return the results in JSON format
+    try:
+        response = requests.get(API_URL, headers=headers, params=params, timeout=10)
+        response.raise_for_status()  # Raise HTTPError for bad responses (4xx or 5xx)
         return response.json()
-    else:
-        # Print an error message and return an empty list
-        print(f"Error: Unable to fetch data. Status code: {response.status_code}")
-        return []
+    except requests.exceptions.HTTPError as http_err:
+        print(f"HTTP error occurred: {http_err}")
+    except requests.exceptions.ConnectionError:
+        print("Error: Failed to establish a connection to the API.")
+    except requests.exceptions.Timeout:
+        print("Error: The request timed out.")
+    except requests.exceptions.RequestException as req_err:
+        print(f"An error occurred: {req_err}")
+    return []
+
 
 def generate_html(animal_name, animals):
     # Start generating the HTML content

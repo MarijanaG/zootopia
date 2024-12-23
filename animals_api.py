@@ -1,18 +1,15 @@
 import json
-import os
-import requests
-from data_fetcher import fetch_animal_data, generate_html
 
 
 def load_data(file_path):
     """
-    Load data from a JSON file.
+    Load data from a JSON file with error handling for file not found and invalid JSON.
 
     Args:
         file_path (str): The path to the JSON file.
 
     Returns:
-        list: The data loaded from the JSON file.
+        list: The data loaded from the JSON file, or an empty list if errors occur.
     """
     try:
         with open(file_path, "r") as handle:
@@ -117,12 +114,13 @@ def main():
     Returns:
         None
     """
-    animals = load_data('animals_data.json')
-    creating_data(animals)
-    html_template = load_template()
-    animals_info = creating_string(animals)
-    updated_html = replace_placeholder(html_template, '__REPLACE_ANIMALS_INFO__', animals_info)
-    with open('animals.html', 'w') as file:
+    animals = load_data('animals_data.json')  # Load data from the JSON file
+    creating_data(animals)  # Print animal data to console
+    html_template = load_template()  # Load the HTML template
+    animals_info = creating_string(animals)  # Generate the HTML string with animal data
+    updated_html = replace_placeholder(html_template, '__REPLACE_ANIMALS_INFO__',
+                                       animals_info)  # Replace the placeholder in the template
+    with open('animals.html', 'w') as file:  # Write the updated HTML to a file
         file.write(updated_html)
     print("HTML file 'animals.html' has been created successfully.")
 
