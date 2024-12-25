@@ -111,20 +111,31 @@ def replace_placeholder(html_content, placeholder, replacement):
 
 
 def main():
-    """
-    Main function to load animal data, create an HTML file, and write it to disk.
+    """Main function to prompt user input, fetch animal data, and generate an HTML file.
 
-    Returns:
-        None
-    """
-    animals = load_data('animals_data.json')
-    creating_data(animals)
-    html_template = load_template()
-    animals_info = creating_string(animals)
-    updated_html = replace_placeholder(html_template, '__REPLACE_ANIMALS_INFO__', animals_info)
-    with open('animals.html', 'w') as file:
-        file.write(updated_html)
-    print("HTML file 'animals.html' has been created successfully.")
+The function:
+1. Prompts the user to enter an animal name.
+2. Fetches data about the animal from the API.
+3. If data is found, generates an HTML file with the results.
+4. If no data is found, generates an HTML file with an error message."""
+
+    animal_name = input("Enter the name of an animal: ").strip()
+
+    if not animal_name:
+        print("Animal name cannot be blank.")
+        return
+
+    animals = fetch_animal_data(animal_name)
+
+    if animals:
+        generate_html(animal_name, animals)
+        print("Website was successfully generated to the file animals.html.")
+    else:
+        generate_html(
+            animal_name,
+            [{"name": f"The animal '{animal_name}' doesn't exist."}]
+        )
+        print("Website was successfully generated with an error message to the file animals.html.")
 
 
 if __name__ == "__main__":
